@@ -8,8 +8,8 @@ exports.handleRequest = function (req, res) {
   if (req.method === 'GET') {
     fs.readFile('/Users/student/code/hrsf82-web-historian/web/public/index.html', 'utf8',
       function(err, data) {
-      res.writeHead(200, httphelper.headers);
-      res.end(data);
+        res.writeHead(200, httphelper.headers);
+        res.end(data);
       }
     );
   }
