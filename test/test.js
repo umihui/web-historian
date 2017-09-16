@@ -19,9 +19,9 @@ describe('server', function() {
   describe('GET /', function () {
     it('should return the content of index.html', function (done) {
       // just assume that if it contains an <input> tag its index.html
-      request
-        .get('/')
-        .expect(200, /<input/, done);
+      var d = request.get('/')
+      d.expect(200, /<input/, done);
+      //console.log('data',d);
     });
   });
 
@@ -91,18 +91,22 @@ describe('archive helpers', function() {
 
   describe('#isUrlInList', function () {
     it('should check if a url is in the list', function (done) {
+
       var urlArray = ['example1.com', 'example2.com'];
+      console.log(archive.paths.list);
       fs.writeFileSync(archive.paths.list, urlArray.join('\n'));
 
       var counter = 0;
       var total = 2;
 
       archive.isUrlInList('example1.com', function (exists) {
+        console.log('IsList',exists);
         expect(exists).to.be.true;
         if (++counter === total) { done(); }
       });
 
       archive.isUrlInList('gibberish', function (exists) {
+        console.log('IsList',exists);
         expect(exists).to.be.false;
         if (++counter === total) { done(); }
       });
