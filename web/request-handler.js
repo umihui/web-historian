@@ -26,33 +26,41 @@ exports.handleRequest = function (req, res) {
       var input = body.split('=')[1];
       archive.isUrlInList(input, function(result) {
         if (result) {
-          console.log('isUrlInList: true', input, result);
-          fs.readFile('/Users/student/code/hrsf82-web-historian/web/public/loading.html', 'utf8',
-            function(err, data) {
-              res.writeHead(200, httphelper.headers);
-              res.end(data);
-            });
+          fs.readFile('/Users/student/code/hrsf82-web-historian/web/public/loading.html', 'utf8', function(err, data) {
+            console.log('isUrlInList: ERROR!!!', err);
+            res.writeHead(200, httphelper.headers);
+            res.end(data);
+          });
         } else {
-          console.log('isUrlInList: false', input, result);
           archive.isUrlArchived(input, function(result) {
-
             if (result) {
-              console.log('isUrlArchived: true', input, result);
-              res.writeHead(302, httphelper.headers);
-              res.end('');
-              // archive.addUrlToList(input, function() {
-
-              // });
-            } else {
-              console.log('isUrlArchived: false', input, result);
-              archive.addUrlToList(input, function() {
+              console.log('GOOGLE IS HERE' );
+              //console.log(archive.paths.archivedSites,'/',input , '/index.html');
+              fs.readFile(archive.paths.archivedSites + '/' + input + '/index.html', 'utf8', function(err, data) {
+                //console.log('archive.paths.archivedSites: ERROR!!!', err);
                 res.writeHead(302, httphelper.headers);
-                res.end('');
+                res.end(data);
               });
+            } else {
+
+              archive.addUrlToList(input, function() {
+                fs.readFile('/Users/student/code/hrsf82-web-historian/web/public/loading.html', 'utf8', function(err, data) {
+                  //console.log('isUrlInList: ERROR!!!', err);
+                  //archive.downloadUrls(['www.everlane.com']);
+                  res.writeHead(302, httphelper.headers);
+                  res.end(data);
+                });
+              });
+              archive.readListOfUrls(archive.downloadUrls);
             }
           });
         }
       });
+
+      // archive.addUrlToList(input, function() {
+      //   res.writeHead(302, httphelper.headers);
+      //   res.end('');
+      // });
     });
   }
 
