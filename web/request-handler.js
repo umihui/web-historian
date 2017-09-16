@@ -24,19 +24,44 @@ exports.handleRequest = function (req, res) {
 
     req.on('end', function() {
       var input = body.split('=')[1];
-      // archive.isUrlInList(input, function(result) {
-      //   if (!result) {
-      archive.addUrlToList(input, function() {
-        res.writeHead(302, httphelper.headers);
-        res.end('');
+      archive.isUrlInList(input, function(result) {
+        if (result) {
+          fs.readFile('/Users/student/code/hrsf82-web-historian/web/public/loading.html', 'utf8', function(err, data) {
+            console.log('isUrlInList: ERROR!!!', err);
+            res.writeHead(200, httphelper.headers);
+            res.end(data);
+          });
+        } else {
+          archive.isUrlArchived(input, function(result) {
+            if (result) {
+              console.log('GOOGLE IS HERE' );
+              //console.log(archive.paths.archivedSites,'/',input , '/index.html');
+              fs.readFile(archive.paths.archivedSites + '/' + input + '/index.html', 'utf8', function(err, data) {
+                //console.log('archive.paths.archivedSites: ERROR!!!', err);
+                res.writeHead(302, httphelper.headers);
+                res.end(data);
+              });
+            } else {
+
+              archive.addUrlToList(input, function() {
+                fs.readFile('/Users/student/code/hrsf82-web-historian/web/public/loading.html', 'utf8', function(err, data) {
+                  //console.log('isUrlInList: ERROR!!!', err);
+                  //archive.downloadUrls(['www.everlane.com']);
+                  res.writeHead(302, httphelper.headers);
+                  res.end(data);
+                });
+              });
+              archive.readListOfUrls(archive.downloadUrls);
+            }
+          });
+        }
       });
-      //   }
 
-        //url not in the list : url was Archived or because it's new url
-        //if result is false: add url to sites.txt and retrun loading page
-        //esle return files
+      // archive.addUrlToList(input, function() {
+      //   res.writeHead(302, httphelper.headers);
+      //   res.end('');
+      // });
 
-      //console.log('post archive', archive.isUrlInList(input, function(result) {console.log('WE KNOW ABOUT CALLBACKS:', result)}));
     });
 
   }
