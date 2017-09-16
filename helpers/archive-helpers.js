@@ -30,7 +30,6 @@ exports.readListOfUrls = function(callback) {
   fs.readFile(exports.paths.list, 'utf8', function(err, data) {
     console.log(data);
     var result = data.split('\n');
-    result.pop();
     console.log('READLIST', result);
     callback(result);
   });
@@ -62,38 +61,22 @@ exports.isUrlArchived = function(url, callback) {
 
 exports.downloadUrls = function(urls) {
   console.log('URL: ', urls);
-  //input is an array of url strings
-  //iterate the array
-  //save each url into archive folder
   fs.writeFile('/Users/student/code/hrsf82-web-historian/archives/sites.txt', '', function(err) {
     if (err) {
-      console.log('CLEAR', err);
+      //console.log('CLEAR', err);
     }
     console.log('CLEAR TXT');
   });
   urls.forEach( function(url) {
-    var options = {
-      urls: ['http://'+ url],
-      directory: exports.paths.archivedSites + '/' + url
-    };
-
-    scrape(options).then((result) => {
-
-      // console.log(result);
-    }).catch((err) => {
-      console.log('DOWNLOAD', err);
-    });
-
+    if (url !== '') {
+      var options = {
+        urls: ['http://'+ url],
+        directory: exports.paths.archivedSites + '/' + url
+      };
+      scrape(options).then((result) => {
+      }).catch((err) => {
+        //console.log('DOWNLOAD', err);
+      });
+    }
   });
-  //urls.forEach( function(url) {
-    //   var file = fs.createWriteStream(exports.paths.archivedSites + '/' + url);
-
-    //   var request = http.get('http://'+ url, function(response) {
-    //     //console.log('RESPONSE downloadUrls:', response);
-    //     response.pipe(file);
-    // });
-
-
-
-  //})
 };

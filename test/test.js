@@ -21,7 +21,6 @@ describe('server', function() {
       // just assume that if it contains an <input> tag its index.html
       var d = request.get('/');
       d.expect(200, /<input/, done);
-      //console.log('data',d);
     });
   });
 
@@ -29,7 +28,7 @@ describe('server', function() {
     describe('GET', function () {
       it('should return the content of a website from the archive', function (done) {
         var fixtureName = 'www.google.com';
-        var fixturePath = archive.paths.archivedSites + '/' + fixtureName;
+        var fixturePath = archive.paths.archivedSites + '/' + fixtureName + '/index.html';
 
         // Create or clear the file.
         var fd = fs.openSync(fixturePath, 'w');

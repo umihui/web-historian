@@ -2,16 +2,32 @@ var path = require('path');
 var archive = require('../helpers/archive-helpers');
 var fs = require('fs');
 var httphelper = require('./http-helpers');
+var url = require('url');
 // require more modules/folders here!
 
 exports.handleRequest = function (req, res) {
   if (req.method === 'GET') {
-    fs.readFile('/Users/student/code/hrsf82-web-historian/web/public/index.html', 'utf8',
-      function(err, data) {
-        res.writeHead(200, httphelper.headers);
-        res.end(data);
-      }
-    );
+    var pathname = url.parse(req.url).pathname;
+    if (pathname === '/') {
+      fs.readFile('/Users/student/code/hrsf82-web-historian/web/public/index.html', 'utf8',
+        function(err, data) {
+          res.writeHead(200, httphelper.headers);
+          res.end(data);
+        }
+      );
+    } else {
+      fs.readFile(archive.paths.archivedSites + pathname + '/index.html', 'utf8',
+        function(err, data) {
+          if (err) {
+            res.writeHead(404, httphelper.headers);
+            res.end('not found');
+          }
+          res.writeHead(200, httphelper.headers);
+          res.end(data);
+        }
+      );
+    }
+
   }
 
   if (req.method === 'POST') {
@@ -27,17 +43,13 @@ exports.handleRequest = function (req, res) {
       archive.isUrlInList(input, function(result) {
         if (result) {
           fs.readFile('/Users/student/code/hrsf82-web-historian/web/public/loading.html', 'utf8', function(err, data) {
-            console.log('isUrlInList: ERROR!!!', err);
             res.writeHead(200, httphelper.headers);
             res.end(data);
           });
         } else {
           archive.isUrlArchived(input, function(result) {
             if (result) {
-              console.log('GOOGLE IS HERE' );
-              //console.log(archive.paths.archivedSites,'/',input , '/index.html');
               fs.readFile(archive.paths.archivedSites + '/' + input + '/index.html', 'utf8', function(err, data) {
-                //console.log('archive.paths.archivedSites: ERROR!!!', err);
                 res.writeHead(302, httphelper.headers);
                 res.end(data);
               });
@@ -45,22 +57,15 @@ exports.handleRequest = function (req, res) {
 
               archive.addUrlToList(input, function() {
                 fs.readFile('/Users/student/code/hrsf82-web-historian/web/public/loading.html', 'utf8', function(err, data) {
-                  //console.log('isUrlInList: ERROR!!!', err);
-                  //archive.downloadUrls(['www.everlane.com']);
                   res.writeHead(302, httphelper.headers);
                   res.end(data);
                 });
               });
-              archive.readListOfUrls(archive.downloadUrls);
+              //
             }
           });
         }
       });
-
-      // archive.addUrlToList(input, function() {
-      //   res.writeHead(302, httphelper.headers);
-      //   res.end('');
-      // });
     });
   }
 
@@ -68,5 +73,7 @@ exports.handleRequest = function (req, res) {
     res.writeHead(200, httphelper.headers);
     res.end('');
   }
-
 };
+
+
+
