@@ -1,17 +1,17 @@
 var path = require('path');
 var archive = require('../helpers/archive-helpers');
 var fs = require('fs');
-var httphelper = require('./http-helpers')
+var httphelper = require('./http-helpers');
 // require more modules/folders here!
 
 exports.handleRequest = function (req, res) {
 
   if (req.method === 'GET') {
-    fs.readFile('/Users/student/code/hrsf82-web-historian/web/public/index.html', 'utf8' ,function(err, data) {
+    fs.readFile('/Users/student/code/hrsf82-web-historian/web/public/index.html', 'utf8', function(err, data) {
     //console.log('ERROR!!!', err);
-    res.writeHead(200, httphelper.headers);
-    res.end(data);
-    })
+      res.writeHead(200, httphelper.headers);
+      res.end(data);
+    });
   }
 
   if (req.method === 'POST') {
@@ -19,14 +19,14 @@ exports.handleRequest = function (req, res) {
 
     req.on('data', function(data) {
       body += data;
-    })
+    });
     // var input = body.split('=')[1];
 
     req.on('end', function() {
       var input = body.split('=')[1];
       // archive.isUrlInList(input, function(result) {
       //   if (!result) {
-      archive.addUrlToList(input, function(){
+      archive.addUrlToList(input, function() {
         res.writeHead(302, httphelper.headers);
         res.end('');
       });

@@ -44,15 +44,14 @@ exports.isUrlInList = function(url, callback) {
 exports.addUrlToList = function(url, callback) {
   console.log('addUrlToList paths.list:', exports.paths.list);
   var add = url + '\n';
-  fs.appendFile(exports.paths.list, add , (err) => {
-  if (err) throw err;
-  callback();
-})
-
+  fs.appendFile(exports.paths.list, add, (err) => {
+    if (err) {throw err;}
+    callback();
+  });
 };
 
 exports.isUrlArchived = function(url, callback) {
-    fs.exists(exports.paths.archivedSites + '/' + url, function(exists) {
+  fs.exists(exports.paths.archivedSites + '/' + url, function(exists) {
     callback(exists);
   });
 };
